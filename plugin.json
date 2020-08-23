@@ -1,0 +1,14 @@
+{
+	"pluginName": "PostgreSQL11.2",
+	"description": "postgresql11.2文档",
+	"preload": "preload.js",
+	"version": "0.0.1",
+	"features": [
+		{
+		  "code": "postgresql",
+		  "explain": "hello world",
+			"cmds":["postgresql", "数据库"]
+		}
+    ],
+    "logo": "postgresql.jpg"
+}

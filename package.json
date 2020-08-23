@@ -1,0 +1,13 @@
+{
+  "name": "postgresql",
+  "version": "0.0.1",
+  "description": "postgresql 文档",
+  "scripts": {
+    "11.2": "node generate.js postgresql-11.2-docs-html"
+  },
+  "author": "kizzy",
+  "license": "MIT",
+  "dependencies": {
+    "request": "^2.88.2"
+  }
+}
