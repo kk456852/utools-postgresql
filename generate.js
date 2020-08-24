@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
-const request = require('request')
+var process_ = require('child_process');
+
 function getpostgresqlReferenceIndexes (postgresqleVersionDir, indexes) {
   const postgresqlVersion = postgresqleVersionDir.match(/postgresql-(\d\d\.\d)/)[1]
   const pubPath = path.join(__dirname, 'public', 'postgresql-' + postgresqlVersion)
@@ -9,13 +10,16 @@ function getpostgresqlReferenceIndexes (postgresqleVersionDir, indexes) {
   if (!matchs) throw new Error('😱  语言参考未匹配')
   let parentString = ''
   matchs.forEach(x => {
-    var request_url = x.match(/https.*" /g)
-    var title = x.match(/title.*"/g)
-    var response = request(request_url ,function (error, response, data) {
-   
-      return data
-      
-    })
+    var request_url = x.match(/"https.*?"/g)[0]
+    request_url = request_url.replace("\"","")
+    request_url = request_url.replace("\"","")
+    var title = x.match(/title.*"/g)[0].replace("title=\"","")
+    title = title.replace("\"","")
+    title = title.replace("\.","")
+    title = title.replace(/\s*/g,"")
+    var filepath = pubPath + "/reference/" + title + '.html';
+    var cmdStr = 'curl '+request_url+' > ' + filepath
+    process_.exec(cmdStr)
     // const rowMatches = x.match(/<li class="toctree-l(\d)">\s*<a class="reference internal" href="([^"\n]+?)">([\s\S]+?)<\/a>/)
     // if (rowMatches[1] === '1') {
     //   parentString = rowMatches[3].replace(/\d{1,2}\.(?:\d{1,2}\.)?/, '').trim()
@@ -26,8 +30,10 @@ function getpostgresqlReferenceIndexes (postgresqleVersionDir, indexes) {
     // }
     // let key = rowMatches[3].replace(/\d{1,2}\.(?:\d{1,2}\.)?/, '').trim()
     // key = removeHtmlTag(key)
-    indexes.push({ t: title, p: 'reference/' + title, d: title })
+    indexes.push({ t: title, p: './reference/' + title +'.html', d: title })
+    
   })
+    fs.writeFileSync("./indexes.json", JSON.stringify(indexes))
 }
 function main () {
   var args = process.argv.slice(2)
